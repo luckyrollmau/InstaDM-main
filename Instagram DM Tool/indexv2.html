@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram DM Sender V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Circular+Std:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Circular Std', sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+        h1 {
+            font-weight: 600;
+            color: #a0e9af;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-weight: 400;
+            color: #84c4d4;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        /* Form Styles */
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #b3b3b3;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #292929;
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        /* Checkbox Style */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        /* Button Styles */
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e1e1e;
+            background-color: #84c4d4;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #a0e9af;
+        }
+
+        /* Control Buttons */
+        #control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .start-button {
+            background-color: #84c4d4;
+            flex: 1;
+        }
+        #stopButton {
+            background-color: #ff6b6b;
+            flex: 1;
+            display: none;
+        }
+        #stopButton:hover {
+            background-color: #ff4f4f;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .counter {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #84c4d4;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #292929;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        #progress {
+            height: 100%;
+            background-color: #84c4d4;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Today Counter */
+        .today-counter {
+            background-color: #1e2d3d;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #84c4d4;
+            margin: 15px 0;
+            text-align: center;
+        }
+        #today-count {
+            color: #a0e9af;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        /* Status Table */
+        .status-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        .status-table th,
+        .status-table td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #333;
+            background-color: #292929;
+        }
+        .status-table th {
+            background-color: #1e1e1e;
+            color: #84c4d4;
+        }
+
+        /* Download Section */
+        #download-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            display: none;
+        }
+        .download-btn {
+            background-color: #a0e9af;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background-color: #84c4d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Instagram DM Sender V2</h1>
+
+        <!-- Login Section -->
+        <h2>Log In</h2>
+        <form action="/login" method="POST">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Log In and Save Session</button>
+        </form>
+
+        <!-- Bulk DM Section -->
+        <h2>Send Bulk DMs</h2>
+        <form id="bulkDmForm" enctype="multipart/form-data">
+            <label for="csv_file">Upload CSV file (username, message)</label>
+            <input type="file" id="csv_file" name="csv_file" accept=".csv" required>
+
+            <label for="message_delay">Delay between messages (seconds)</label>
+            <input type="number" id="message_delay" name="message_delay" value="30" min="10" required>
+
+            <label for="num_dms">Number of DMs to send</label>
+            <input type="number" id="num_dms" name="num_dms" value="10" min="1" required>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="follow_users" name="follow_users">
+                <label for="follow_users">Follow users before sending message</label>
+            </div>
+
+            <div id="control-buttons">
+                <button type="submit" class="start-button">Start Sending DMs</button>
+                <button type="button" id="stopButton">Stop Process</button>
+            </div>
+        </form>
+
+        <!-- Progress Section -->
+        <div class="progress-section" id="progressSection">
+            <!-- Main counter -->
+            <div class="counter">
+                <span id="current-count">0</span> / <span id="total-count">0</span> messages sent
+            </div>
+            
+            <!-- Today's counter -->
+            <div class="today-counter">
+                <span>Total DMs sent today: <span id="today-count">0</span></span>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="progress-bar">
+                <div id="progress"></div>
+            </div>
+
+            <!-- Status table -->
+            <table class="status-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="status-table-body"></tbody>
+            </table>
+
+            <!-- Download Section -->
+            <div id="download-section">
+                <button onclick="downloadRemainingCSV()" class="download-btn">
+                    Download Remaining Messages
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isProcessing = false;
+        let statusCheckInterval;
+        let lastStatus = null;
+
+        document.getElementById('bulkDmForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            if (isProcessing) return;
+            
+            isProcessing = true;
+            document.getElementById('stopButton').style.display = 'block';
+            document.getElementById('progressSection').style.display = 'block';
+            document.getElementById('download-section').style.display = 'none';
+            
+            const formData = new FormData(this);
+            formData.append('follow_users', document.getElementById('follow_users').checked);
+
+            fetch('/reset_status', { method: 'POST' })
+            .then(() => {
+                statusCheckInterval = setInterval(updateProgress, 2000);
+                return fetch('/send_bulk_dms', {
+                    method: 'POST',
+                    body: formData
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateProgress();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                stopProcess();
+            });
+        };
+
+        document.getElementById('stopButton').onclick = function() {
+            if (confirm('Are you sure you want to stop the process? You can download remaining messages after stopping.')) {
+                stopProcess();
+            }
+        };
+
+        function stopProcess() {
+            isProcessing = false;
+            clearInterval(statusCheckInterval);
+            document.getElementById('stopButton').style.display = 'none';
+            document.getElementById('download-section').style.display = 'block';
+            
+            fetch('/stop_process', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Process stopped:', data);
+                updateProgress();
+            })
+            .catch(error => console.error('Error stopping process:', error));
+        }
+
+        function downloadRemainingCSV() {
+            fetch('/get_remaining_messages')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'remaining_messages.csv';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            })
+            .catch(error => {
+                console.error('Error downloading CSV:', error);
+                alert('Error downloading remaining messages. Please try again.');
+            });
+        }
+
+        function updateProgress() {
+            fetch('/get_current_status')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('current-count').textContent = data.current;
+                document.getElementById('total-count').textContent = data.total;
+                document.getElementById('today-count').textContent = data.today_count || 0;
+                
+                const percentage = (data.current / data.total) * 100 || 0;
+                document.getElementById('progress').style.width = percentage + '%';
+                
+                const tableBody = document.getElementById('status-table-body');
+                tableBody.innerHTML = '';
+                
+                data.messages.forEach(msg => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${msg.username}</td>
+                        <td>${msg.status}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                // Show download button if process is complete or stopped
+                if (!isProcessing || (data.current >= data.total && data.total > 0)) {
+                    document.getElementById('download-section').style.display = 'block';
+                    document.getElementById('stopButton').style.display = 'none';
+                }
+
+                lastStatus = data;
+            })
+            .catch(error => {
+                console.error('Error in update:', error);
+                clearInterval(statusCheckInterval);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram DM Sender</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Circular+Std:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Circular Std', sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+        h1 {
+            font-weight: 600;
+            color: #a0e9af;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-weight: 400;
+            color: #84c4d4;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        /* Form Styles */
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #b3b3b3;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #292929;
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        /* Button Styles */
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e1e1e;
+            background-color: #84c4d4;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #a0e9af;
+        }
+
+        /* Message Feedback */
+        .result {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #84c4d4;
+            background-color: #292929;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Instagram DM Sender</h1>
+
+        <h2>Log In</h2>
+        <form action="/login" method="POST">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Log In and Save Session</button>
+        </form>
+
+        <h2>Send Bulk DMs</h2>
+        <form action="/send_bulk_dms" method="POST" enctype="multipart/form-data">
+            <label for="csv_file">Upload CSV</label>
+            <input type="file" id="csv_file" name="csv_file" required>
+
+            <label for="message_delay">Message Delay (seconds)</label>
+            <input type="text" id="message_delay" name="message_delay" required>
+
+            <label for="num_dms">Number of DMs</label>
+            <input type="text" id="num_dms" name="num_dms" required>
+
+            <label for="follow_after">Follow After Sending</label>
+            <input type="checkbox" id="follow_after" name="follow_after">
+
+            <button type="submit">Send DMs</button>
+        </form>
+
+        {% if result %}
+            <div class="result">{{ result }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
