@@ -131,39 +131,65 @@ def get_todays_dm_count(session_username):
 def fix_csv_delimiter_and_format(file_path):
     """
     Check and fix the delimiter in a CSV file.
-    Ensures proper 'username,message' format for processing.
+    Ensures proper 'username,message' format and handles commas within messages.
+    Returns path to the fixed CSV file.
     """
     fixed_file_path = file_path.replace(".csv", "_fixed.csv")
     
-    with open(file_path, 'r', newline='', encoding='utf-8-sig') as infile:
-        content = infile.readlines()
-        
-        # Check for semicolon delimiter or invalid format
-        if ';' in content[0]:
-            print("Detected semicolon delimiter, fixing the file...")
-        elif "username" not in content[0] or "message" not in content[0]:
-            print("Missing header or invalid format, fixing the file...")
-        else:
-            print("CSV format is correct. No changes needed.")
-            return file_path  # File is already correct
-        
-        # Fix the file
-        with open(fixed_file_path, 'w', newline='', encoding='utf-8') as outfile:
-            writer = csv.writer(outfile, delimiter=',')
+    try:
+        # First, detect the delimiter and read the file
+        with open(file_path, 'r', newline='', encoding='utf-8-sig') as infile:
+            # Read a sample to detect delimiter
+            sample = infile.read(1024)
+            infile.seek(0)
             
-            # Ensure correct header
-            writer.writerow(["username", "message"])
+            # Check for common delimiters
+            possible_delimiters = [',', ';', '\t', '|']
+            delimiter = ','  # default
+            for d in possible_delimiters:
+                if d in sample:
+                    delimiter = d
+                    break
             
-            for line in content[1:]:  # Skip header in old file if exists
-                parts = line.strip().split(';') if ';' in line else line.strip().split(',')
+            # Use csv module to properly handle quoted fields
+            reader = csv.reader(infile, delimiter=delimiter)
+            header = next(reader, None)
+            
+            # Verify and standardize header
+            if not header or len(header) < 2:
+                header = ["username", "message"]
+            else:
+                # Clean header names
+                header = [h.strip().lower() for h in header]
+                # Find username and message columns
+                username_col = next((i for i, h in enumerate(header) if 'user' in h), 0)
+                message_col = next((i for i, h in enumerate(header) if 'message' in h or 'text' in h), 1)
+            
+            # Write the standardized CSV
+            with open(fixed_file_path, 'w', newline='', encoding='utf-8') as outfile:
+                writer = csv.writer(outfile, delimiter=',', quoting=csv.QUOTE_ALL)
+                writer.writerow(["username", "message"])
                 
-                if len(parts) >= 2:
-                    username = parts[0].strip()
-                    message = parts[1].strip()
-                    writer.writerow([username, message])
+                for row in reader:
+                    if len(row) >= max(username_col + 1, message_col + 1):
+                        username = row[username_col].strip()
+                        message = row[message_col].strip()
+                        
+                        # Skip empty rows
+                        if not username or not message:
+                            continue
+                            
+                        # Write the row with proper quoting
+                        writer.writerow([username, message])
         
-        print(f"Fixed CSV saved to: {fixed_file_path}")
+        print(f"CSV successfully standardized and saved to: {fixed_file_path}")
         return fixed_file_path
+        
+    except Exception as e:
+        print(f"Error processing CSV: {str(e)}")
+        if os.path.exists(fixed_file_path):
+            os.remove(fixed_file_path)
+        raise
 
 
 # Chrome Setup Functions
@@ -477,18 +503,25 @@ def get_remaining_messages():
     print(f"Remaining: {len(remaining_messages)}")
 
     output = io.StringIO()
-    writer = csv.writer(output)
+    writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_ALL)
     writer.writerow(['username', 'message'])
+    
     for msg in remaining_messages:
-        writer.writerow([msg["username"], msg.get("message", "")])
+        username = msg["username"].strip()
+        message = msg.get("message", "").strip()
+        if username and message:  # Only write non-empty rows
+            writer.writerow([username, message])
     
     output.seek(0)
     return Response(
         output.getvalue(),
         mimetype="text/csv",
-        headers={"Content-disposition": "attachment; filename=remaining_messages.csv"}
+        headers={
+            "Content-disposition": "attachment; filename=remaining_messages.csv",
+            "Content-Type": "text/csv; charset=utf-8"
+        }
     )
-
+    
 @app.route("/reset_status", methods=["POST"])
 def reset_status():
     global CURRENT_STATUS

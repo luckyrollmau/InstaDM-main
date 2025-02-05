@@ -357,27 +357,34 @@
 
       function downloadRemainingCSV() {
         fetch("/get_remaining_messages")
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            return response.blob();
-          })
-          .then((blob) => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "remaining_messages.csv";
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            a.remove();
-          })
-          .catch((error) => {
-            console.error("Error downloading CSV:", error);
-            alert("Error downloading remaining messages. Please try again.");
-          });
-      }
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Ensure proper handling of the response
+                return response.blob();
+            })
+            .then(blob => {
+                // Create a new blob with UTF-8 encoding
+                const newBlob = new Blob([blob], { type: 'text/csv;charset=utf-8' });
+                
+                // Create and trigger download
+                const url = window.URL.createObjectURL(newBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `remaining_messages_${new Date().toISOString().split('T')[0]}.csv`;
+                
+                // Append to document, click, and cleanup
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error downloading CSV:', error);
+                alert('Error downloading remaining messages. Please try again.');
+            });
+}
 
       function updateProgress() {
         fetch("/get_current_status")
