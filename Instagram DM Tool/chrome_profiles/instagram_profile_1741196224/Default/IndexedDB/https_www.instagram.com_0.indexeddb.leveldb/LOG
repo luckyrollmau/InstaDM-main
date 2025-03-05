@@ -1,0 +1,6 @@
+2025/03/05-11:37:18.106 a807 Creating DB /Users/maugonzalez/Desktop/Mau/Python/InstaDM-main/Instagram DM Tool/chrome_profiles/instagram_profile_1741196224/Default/IndexedDB/https_www.instagram.com_0.indexeddb.leveldb since it was missing.
+2025/03/05-11:37:18.114 a807 Reusing MANIFEST /Users/maugonzalez/Desktop/Mau/Python/InstaDM-main/Instagram DM Tool/chrome_profiles/instagram_profile_1741196224/Default/IndexedDB/https_www.instagram.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/03/05-11:37:19.138 f703 Level-0 table #5: started
+2025/03/05-11:37:19.140 f703 Level-0 table #5: 8311 bytes OK
+2025/03/05-11:37:19.141 f703 Delete type=0 #3
+2025/03/05-11:37:19.142 a807 Manual compaction at level-0 from '\x00\x06\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x07\x00\x00\x00' @ 0 : 0; will stop at (end)
