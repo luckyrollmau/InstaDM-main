@@ -342,7 +342,7 @@ def send_dm(target_username, message_text, follow_first=False):
        if target_username in sent_messages_log:
            return f"Skipped - already sent this session"
 
-       driver = initialize_driver(headless=True)
+       driver = initialize_driver(headless=False)
        human_delay(random.uniform(1.5, 4.5), random.uniform(4, 8))
        driver.get("https://www.instagram.com")
        human_delay(2, 6)
